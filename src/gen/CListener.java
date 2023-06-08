@@ -237,16 +237,6 @@ public interface CListener extends ParseTreeListener {
 	 */
 	void exitDeclarationSpecifiers(CParser.DeclarationSpecifiersContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link CParser#declarationSpecifiers2}.
-	 * @param ctx the parse tree
-	 */
-	void enterDeclarationSpecifiers2(CParser.DeclarationSpecifiers2Context ctx);
-	/**
-	 * Exit a parse tree produced by {@link CParser#declarationSpecifiers2}.
-	 * @param ctx the parse tree
-	 */
-	void exitDeclarationSpecifiers2(CParser.DeclarationSpecifiers2Context ctx);
-	/**
 	 * Enter a parse tree produced by {@link CParser#declarationSpecifier}.
 	 * @param ctx the parse tree
 	 */
@@ -427,16 +417,6 @@ public interface CListener extends ParseTreeListener {
 	 */
 	void exitDeclarator(CParser.DeclaratorContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link CParser#maindeclarator}.
-	 * @param ctx the parse tree
-	 */
-	void enterMaindeclarator(CParser.MaindeclaratorContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link CParser#maindeclarator}.
-	 * @param ctx the parse tree
-	 */
-	void exitMaindeclarator(CParser.MaindeclaratorContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link CParser#directDeclarator}.
 	 * @param ctx the parse tree
 	 */
@@ -446,16 +426,6 @@ public interface CListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDirectDeclarator(CParser.DirectDeclaratorContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link CParser#maindirectDeclarator}.
-	 * @param ctx the parse tree
-	 */
-	void enterMaindirectDeclarator(CParser.MaindirectDeclaratorContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link CParser#maindirectDeclarator}.
-	 * @param ctx the parse tree
-	 */
-	void exitMaindirectDeclarator(CParser.MaindirectDeclaratorContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link CParser#nestedParenthesesBlock}.
 	 * @param ctx the parse tree
@@ -736,16 +706,6 @@ public interface CListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitFunctionDefinition(CParser.FunctionDefinitionContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link CParser#mainfunctionDefinition}.
-	 * @param ctx the parse tree
-	 */
-	void enterMainfunctionDefinition(CParser.MainfunctionDefinitionContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link CParser#mainfunctionDefinition}.
-	 * @param ctx the parse tree
-	 */
-	void exitMainfunctionDefinition(CParser.MainfunctionDefinitionContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link CParser#declarationList}.
 	 * @param ctx the parse tree

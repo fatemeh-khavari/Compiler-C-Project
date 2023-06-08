@@ -148,12 +148,6 @@ public interface CVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDeclarationSpecifiers(CParser.DeclarationSpecifiersContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link CParser#declarationSpecifiers2}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDeclarationSpecifiers2(CParser.DeclarationSpecifiers2Context ctx);
-	/**
 	 * Visit a parse tree produced by {@link CParser#declarationSpecifier}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -262,23 +256,11 @@ public interface CVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDeclarator(CParser.DeclaratorContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link CParser#maindeclarator}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitMaindeclarator(CParser.MaindeclaratorContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link CParser#directDeclarator}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitDirectDeclarator(CParser.DirectDeclaratorContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link CParser#maindirectDeclarator}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitMaindirectDeclarator(CParser.MaindirectDeclaratorContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link CParser#nestedParenthesesBlock}.
 	 * @param ctx the parse tree
@@ -447,12 +429,6 @@ public interface CVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitFunctionDefinition(CParser.FunctionDefinitionContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link CParser#mainfunctionDefinition}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitMainfunctionDefinition(CParser.MainfunctionDefinitionContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link CParser#declarationList}.
 	 * @param ctx the parse tree

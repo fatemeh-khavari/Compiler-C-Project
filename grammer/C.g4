@@ -113,10 +113,6 @@ declarationSpecifiers
     :   declarationSpecifier+
     ;
 
-declarationSpecifiers2
-    :   declarationSpecifier+
-    ;
-
 declarationSpecifier
     :   storageClassSpecifier
     |   typeSpecifier
@@ -207,22 +203,14 @@ typeQualifier
 declarator
     :   pointer? directDeclarator
     ;
-    maindeclarator
-        :   pointer? maindirectDeclarator
-        ;
 
 directDeclarator
-    :   Identifier (LeftBracket Constant* RightBracket)*
+    :   Identifier (LeftBracket Constant? RightBracket)*
     |   '(' declarator ')'
     |   directDeclarator '(' parameterTypeList ')'
     |   directDeclarator '(' identifierList? ')'
     ;
-maindirectDeclarator
-    :   'main' (LeftBracket Constant* RightBracket)*
-    |   '(' declarator ')'
-    |   maindirectDeclarator '(' parameterTypeList ')'
-    |   maindirectDeclarator '(' identifierList? ')'
-    ;
+
 nestedParenthesesBlock
     :   (   ~('(' | ')')
         |   '(' nestedParenthesesBlock ')'
@@ -349,17 +337,15 @@ jumpStatement
     ;
 
 externalDeclaration
-    :   functionDefinition* mainfunctionDefinition functionDefinition*
-    |   declaration
+    :   (functionDefinition
+    |   declaration)*
     |   ';' // stray ;
     ;
 
 functionDefinition
-    :   declarationSpecifiers? declarator declarationList? compoundStatement
+    :   typeSpecifier declarator declarationList? compoundStatement
     ;
-mainfunctionDefinition
-    :   declarationSpecifiers? maindeclarator declarationList? compoundStatement
-    ;
+
 declarationList
     :   declaration+
     ;

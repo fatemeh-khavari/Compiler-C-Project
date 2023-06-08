@@ -292,18 +292,6 @@ public class CBaseListener implements CListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterDeclarationSpecifiers2(CParser.DeclarationSpecifiers2Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitDeclarationSpecifiers2(CParser.DeclarationSpecifiers2Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterDeclarationSpecifier(CParser.DeclarationSpecifierContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -520,18 +508,6 @@ public class CBaseListener implements CListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterMaindeclarator(CParser.MaindeclaratorContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitMaindeclarator(CParser.MaindeclaratorContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterDirectDeclarator(CParser.DirectDeclaratorContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -539,18 +515,6 @@ public class CBaseListener implements CListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitDirectDeclarator(CParser.DirectDeclaratorContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterMaindirectDeclarator(CParser.MaindirectDeclaratorContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitMaindirectDeclarator(CParser.MaindirectDeclaratorContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -887,18 +851,6 @@ public class CBaseListener implements CListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitFunctionDefinition(CParser.FunctionDefinitionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterMainfunctionDefinition(CParser.MainfunctionDefinitionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitMainfunctionDefinition(CParser.MainfunctionDefinitionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
