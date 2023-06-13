@@ -205,7 +205,7 @@ declarator
     ;
 
 directDeclarator
-    :   Identifier (LeftBracket Constant? RightBracket)*
+    :   functionName=Identifier (LeftBracket Constant? RightBracket)*
     |   '(' declarator ')'
     |   directDeclarator '(' parameterTypeList ')'
     |   directDeclarator '(' identifierList? ')'
@@ -336,7 +336,7 @@ jumpStatement
     ';'
     ;
 
-externalDeclaration
+externalDeclaration//first rule
     :   (functionDefinition
     |   declaration)*
     |   ';' // stray ;

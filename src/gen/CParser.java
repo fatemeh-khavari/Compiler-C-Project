@@ -3272,6 +3272,7 @@ public class CParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class DirectDeclaratorContext extends ParserRuleContext {
+		public Token functionName;
 		public TerminalNode Identifier() { return getToken(CParser.Identifier, 0); }
 		public List<TerminalNode> LeftBracket() { return getTokens(CParser.LeftBracket); }
 		public TerminalNode LeftBracket(int i) {
@@ -3340,7 +3341,7 @@ public class CParser extends Parser {
 			case Identifier:
 				{
 				setState(456);
-				match(Identifier);
+				((DirectDeclaratorContext)_localctx).functionName = match(Identifier);
 				setState(464);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,46,_ctx);

@@ -1,17 +1,99 @@
-import gen.CLexer;
 import gen.CListener;
 import gen.CParser;
-import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 public class ProgramPase1 implements CListener {
+    int tabNum = 0;
+    void printTab(){
+        for(int i = 1; i <= tabNum; i++){
+            System.out.print("    ");
+        }
+    }
+
+    @Override
+    public void enterExternalDeclaration(CParser.ExternalDeclarationContext ctx) {
+
+        System.out.println("program start { ");
+        tabNum++;
+
+    }
+
+    @Override
+    public void exitExternalDeclaration(CParser.ExternalDeclarationContext ctx) {
+        tabNum--;
+        System.out.println("}");
+    }
+
+    @Override
+    public void enterFunctionDefinition(CParser.FunctionDefinitionContext ctx) {
+        String type = ctx.typeSpecifier().getText();
+        String describeFunc = ctx.declarator().getText();
+        int indexOFWriteParen = describeFunc.indexOf('(');
+        String nameFunc;
+        if(!describeFunc.startsWith("const") || !describeFunc.startsWith("*")){
+             nameFunc = describeFunc.substring(0, indexOFWriteParen);
+        }
+        else if(describeFunc.startsWith("const")){
+             nameFunc = describeFunc.substring(4, indexOFWriteParen);
+        }
+        else if(describeFunc.startsWith("*const")){
+             nameFunc = describeFunc.substring(5, indexOFWriteParen);
+        }
+        else {
+             nameFunc = describeFunc.substring(1, indexOFWriteParen);
+        }
+
+        if(type.equals("void")){
+            type = "return type: void(no return) ";
+        }
+        else {
+            type = "return type: " + type + " ";
+        }
+
+
+        printTab();
+        if (describeFunc.matches("^main\\(?\\)?.*")){
+            System.out.println("main metod: " + type  +"{");
+        }
+        else {
+            System.out.println("normal metod: " + "name: "+ nameFunc +"/ " + type + "{");
+        }
+        tabNum++;
+    }
+
+    @Override
+    public void exitFunctionDefinition(CParser.FunctionDefinitionContext ctx) {
+        printTab();
+        System.out.println("}");
+        tabNum--;
+    }
+
+    @Override
+    public void enterParameterTypeList(CParser.ParameterTypeListContext ctx) {
+        printTab();
+        System.out.print("parameter list: [");
+
+        String[] param = ctx.parameterList().getText().split(",");
+        String[] list = new String[param.length];
+        System.out.print( "" + ctx.parameterList().parameterDeclaration(0).declarator().directDeclarator().Identifier()
+                + " " +ctx.parameterList().parameterDeclaration(0).declarationSpecifiers().getText());
+        for(int i = 1; i < param.length; i++){
+            System.out.print( ", " + ctx.parameterList().parameterDeclaration(i).declarator().directDeclarator().Identifier()
+                    + " " +ctx.parameterList().parameterDeclaration(i).declarationSpecifiers().getText());
+        }
+
+    }
+
+    @Override
+    public void exitParameterTypeList(CParser.ParameterTypeListContext ctx) {
+
+        System.out.println("]");
+    }
 
     @Override
     public void enterPrimaryExpression(CParser.PrimaryExpressionContext ctx) {
-        System.out.print("program start { \n" +
-                ctx.getText());
 
     }
 
@@ -460,15 +542,7 @@ public class ProgramPase1 implements CListener {
 
     }
 
-    @Override
-    public void enterParameterTypeList(CParser.ParameterTypeListContext ctx) {
 
-    }
-
-    @Override
-    public void exitParameterTypeList(CParser.ParameterTypeListContext ctx) {
-
-    }
 
     @Override
     public void enterParameterList(CParser.ParameterListContext ctx) {
@@ -690,25 +764,8 @@ public class ProgramPase1 implements CListener {
 
     }
 
-    @Override
-    public void enterExternalDeclaration(CParser.ExternalDeclarationContext ctx) {
 
-    }
 
-    @Override
-    public void exitExternalDeclaration(CParser.ExternalDeclarationContext ctx) {
-
-    }
-
-    @Override
-    public void enterFunctionDefinition(CParser.FunctionDefinitionContext ctx) {
-
-    }
-
-    @Override
-    public void exitFunctionDefinition(CParser.FunctionDefinitionContext ctx) {
-
-    }
 
     @Override
     public void enterDeclarationList(CParser.DeclarationListContext ctx) {

@@ -17,7 +17,7 @@ public class Compiler {
         TokenStream tokens = new CommonTokenStream(lexer);
         CParser parser = new CParser(tokens);
         parser.setBuildParseTree(true);
-        ParseTree parseTree = parser.primaryExpression();
+        ParseTree parseTree = parser.externalDeclaration();
         ParseTreeWalker walker = new ParseTreeWalker();
         CListener listener = new ProgramPase1();
 
