@@ -12,7 +12,7 @@ import java.io.IOException;
 public class Compiler {
     public static void main(String[] args) throws IOException {
 
-        CharStream stream =  CharStreams.fromFileName("./test/test1.c");
+        CharStream stream =  CharStreams.fromFileName("E:\\University\\Terms\\Term6\\compiler\\Compiler Project\\Compiler-C-Project\\test\\test1.c");
         CLexer lexer = new CLexer(stream);
         TokenStream tokens = new CommonTokenStream(lexer);
         CParser parser = new CParser(tokens);
