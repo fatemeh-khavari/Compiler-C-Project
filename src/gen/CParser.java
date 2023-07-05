@@ -1900,7 +1900,9 @@ public class CParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class DeclarationContext extends ParserRuleContext {
-		public DeclarationSpecifiersContext declarationSpecifiers() {
+		public String declarator;
+
+        public DeclarationSpecifiersContext declarationSpecifiers() {
 			return getRuleContext(DeclarationSpecifiersContext.class,0);
 		}
 		public TerminalNode Semi() { return getToken(CParser.Semi, 0); }
