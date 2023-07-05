@@ -4,8 +4,12 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import java.util.List;
+import java.util.ListIterator;
+
 public class ProgramPase1 implements CListener {
     int tabNum = 0;
+    List<String> functoin_names ;
     void printTab(){
         for(int i = 1; i <= tabNum; i++){
             System.out.print("    ");
@@ -28,6 +32,8 @@ public class ProgramPase1 implements CListener {
 
     @Override
     public void enterFunctionDefinition(CParser.FunctionDefinitionContext ctx) {
+
+
         String type = ctx.typeSpecifier().getText();
         String describeFunc = ctx.declarator().getText();
         int indexOFWriteParen = describeFunc.indexOf('(');
@@ -45,12 +51,19 @@ public class ProgramPase1 implements CListener {
              nameFunc = describeFunc.substring(1, indexOFWriteParen);
         }
 
+
         if(type.equals("void")){
             type = "return type: void(no return) ";
         }
         else {
             type = "return type: " + type + " ";
         }
+
+        //bedast avardan list function haye code
+        if(!functoin_names.contains(nameFunc))
+            functoin_names.add(nameFunc);
+        else
+
 
 
         printTab();
@@ -76,13 +89,18 @@ public class ProgramPase1 implements CListener {
         System.out.print("parameter list: [");
 
         String[] param = ctx.parameterList().getText().split(",");
-        String[] list = new String[param.length];
-        System.out.print( "" + ctx.parameterList().parameterDeclaration(0).declarator().directDeclarator().Identifier()
-                + " " +ctx.parameterList().parameterDeclaration(0).declarationSpecifiers().getText());
-        for(int i = 1; i < param.length; i++){
-            System.out.print( ", " + ctx.parameterList().parameterDeclaration(i).declarator().directDeclarator().Identifier()
-                    + " " +ctx.parameterList().parameterDeclaration(i).declarationSpecifiers().getText());
+        //String[] list = new String[param.length];
+        //System.out.print( "" + ctx.parameterList().parameterDeclaration(0).declarator().directDeclarator().Identifier()
+          //      + " " +ctx.parameterList().parameterDeclaration(0).declarationSpecifiers().getText());
+        for(int i = 0; i < param.length; i++){
+            String temp  = ctx.parameterList().parameterDeclaration(i).declarator().directDeclarator().Identifier()
+                    + " " +ctx.parameterList().parameterDeclaration(i).declarationSpecifiers().getText();
+            if (i != param.length -1){
+                temp = temp + ", ";
+            }
+            System.out.print(temp);
         }
+
 
     }
 
@@ -92,6 +110,29 @@ public class ProgramPase1 implements CListener {
         System.out.println("]");
     }
 
+    @Override
+    public void enterDeclaration(CParser.DeclarationContext ctx) {
+        String type = ctx.declarationSpecifiers().getText();
+        List<CParser.InitDeclaratorContext> fields = ctx.initDeclaratorList().initDeclarator();
+
+        for (int i = 0; i < fields.size(); i++){
+            CParser.DirectDeclaratorContext name = ctx.initDeclaratorList().initDeclarator(i).declarator().directDeclarator();
+            String name_var = name.Identifier().getText();
+            printTab();
+            System.out.print("field: " + name_var + "/ type: " + type);
+            List<TerminalNode> c = name.Constant();
+            if (c.size() != 0){
+                System.out.print("/ length: "+ c.get(0)+"\n");
+            }else {
+                System.out.print("\n");
+            }
+        }
+    }
+
+    @Override
+    public void exitDeclaration(CParser.DeclarationContext ctx) {
+
+    }
     @Override
     public void enterPrimaryExpression(CParser.PrimaryExpressionContext ctx) {
 
@@ -104,6 +145,19 @@ public class ProgramPase1 implements CListener {
 
     @Override
     public void enterPostfixExpression(CParser.PostfixExpressionContext ctx) {
+        //function call
+        String prob_func_cal= ctx.primaryExpression().getText();
+        if(functoin_names.contains(prob_func_cal) && ctx.LeftParen() !=  NULL ){
+            System.out.print("function call: name: "+ prob_func_cal+"/ ");
+            ListIterator<CParser.ArgumentExpressionListContext> params_itr= ctx.argumentExpressionList().listIterator();
+            System.out.print("params:");
+        while(params_itr.hasNext()){
+            ctx.argumentExpressionList().toString();
+            params_itr.next();
+            System.out.print( params_name.to);
+        }
+            System.out.print("params:"+ params_name.to);
+        }
 
     }
 
@@ -302,15 +356,7 @@ public class ProgramPase1 implements CListener {
 
     }
 
-    @Override
-    public void enterDeclaration(CParser.DeclarationContext ctx) {
 
-    }
-
-    @Override
-    public void exitDeclaration(CParser.DeclarationContext ctx) {
-
-    }
 
     @Override
     public void enterDeclarationSpecifiers(CParser.DeclarationSpecifiersContext ctx) {
