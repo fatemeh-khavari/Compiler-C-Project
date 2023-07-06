@@ -1,11 +1,16 @@
 import gen.CListener;
 import gen.CParser;
+import org.antlr.runtime.TokenStream;
+import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 public class ProgramPase1 implements CListener {
     int tabNum = 0;
@@ -14,6 +19,7 @@ public class ProgramPase1 implements CListener {
             System.out.print("    ");
         }
     }
+    Stack parantez = new Stack();
 
     @Override
     public void enterExternalDeclaration(CParser.ExternalDeclarationContext ctx) {
@@ -33,19 +39,19 @@ public class ProgramPase1 implements CListener {
     public void enterFunctionDefinition(CParser.FunctionDefinitionContext ctx) {
         String type = ctx.typeSpecifier().getText();
         String describeFunc = ctx.declarator().getText();
-        int indexOFWriteParen = describeFunc.indexOf('(');
+        int indexOFRightParen = describeFunc.indexOf('(');
         String nameFunc;
-        if(!describeFunc.startsWith("const") || !describeFunc.startsWith("*")){
-             nameFunc = describeFunc.substring(0, indexOFWriteParen);
+        if(!describeFunc.startsWith("const") && !describeFunc.startsWith("*")){
+             nameFunc = describeFunc.substring(0, indexOFRightParen);
         }
         else if(describeFunc.startsWith("const")){
-             nameFunc = describeFunc.substring(4, indexOFWriteParen);
+             nameFunc = describeFunc.substring(4, indexOFRightParen);
         }
         else if(describeFunc.startsWith("*const")){
-             nameFunc = describeFunc.substring(5, indexOFWriteParen);
+             nameFunc = describeFunc.substring(5, indexOFRightParen);
         }
         else {
-             nameFunc = describeFunc.substring(1, indexOFWriteParen);
+             nameFunc = describeFunc.substring(1, indexOFRightParen);
         }
 
         if(type.equals("void")){
@@ -68,9 +74,10 @@ public class ProgramPase1 implements CListener {
 
     @Override
     public void exitFunctionDefinition(CParser.FunctionDefinitionContext ctx) {
+        tabNum--;
         printTab();
         System.out.println("}");
-        tabNum--;
+
     }
 
     @Override
@@ -79,9 +86,6 @@ public class ProgramPase1 implements CListener {
         System.out.print("parameter list: [");
 
         String[] param = ctx.parameterList().getText().split(",");
-        //String[] list = new String[param.length];
-        //System.out.print( "" + ctx.parameterList().parameterDeclaration(0).declarator().directDeclarator().Identifier()
-          //      + " " +ctx.parameterList().parameterDeclaration(0).declarationSpecifiers().getText());
         for(int i = 0; i < param.length; i++){
             String temp  = ctx.parameterList().parameterDeclaration(i).declarator().directDeclarator().Identifier()
                     + " " +ctx.parameterList().parameterDeclaration(i).declarationSpecifiers().getText();
@@ -90,6 +94,7 @@ public class ProgramPase1 implements CListener {
             }
             System.out.print(temp);
         }
+
 
 
     }
@@ -103,19 +108,31 @@ public class ProgramPase1 implements CListener {
     @Override
     public void enterDeclaration(CParser.DeclarationContext ctx) {
         String type = ctx.declarationSpecifiers().getText();
-        List<CParser.InitDeclaratorContext> fields = ctx.initDeclaratorList().initDeclarator();
+        if(ctx.initDeclaratorList() != null) {
 
-        for (int i = 0; i < fields.size(); i++){
-            CParser.DirectDeclaratorContext name = ctx.initDeclaratorList().initDeclarator(i).declarator().directDeclarator();
-            String name_var = name.Identifier().getText();
+
+            List<CParser.InitDeclaratorContext> fields = ctx.initDeclaratorList().initDeclarator();
+
+            for (int i = 0; i < fields.size(); i++) {
+                CParser.DirectDeclaratorContext name = ctx.initDeclaratorList().initDeclarator(i).declarator().directDeclarator();
+                String name_var = name.Identifier().getText();
+                printTab();
+                System.out.print("field: " + name_var + "/ type: " + type);
+                List<TerminalNode> c = name.Constant();
+                if (c.size() != 0) {
+                    System.out.print("/ length: " + c.get(0) + "\n");
+                } else {
+                    System.out.print("\n");
+                }
+            }
+        }
+        else {
+            List<CParser.DeclarationSpecifierContext> x = ctx.declarationSpecifiers().declarationSpecifier();
+            String name_var = x.get(x.size()-1).getText();
+            type = x.get(x.size()-2).getText();
             printTab();
             System.out.print("field: " + name_var + "/ type: " + type);
-            List<TerminalNode> c = name.Constant();
-            if (c.size() != 0){
-                System.out.print("/ length: "+ c.get(0)+"\n");
-            }else {
-                System.out.print("\n");
-            }
+
         }
     }
 
@@ -729,34 +746,39 @@ public class ProgramPase1 implements CListener {
 
     @Override
     public void enterSelectionStatement(CParser.SelectionStatementContext ctx) {
-
+            String checking = parantez.peek().toString();
+            if (checking != null){
+                printTab();
+                System.out.println("nested: statement{");
+                printTab();
+                System.out.println("}");
+            }
+            parantez.push("p");
     }
 
     @Override
     public void exitSelectionStatement(CParser.SelectionStatementContext ctx) {
-
+            parantez.pop();
     }
 
     @Override
     public void enterIterationStatement(CParser.IterationStatementContext ctx) {
 
-        String statement = ctx.statement().getText();//get all children tree as children
-        System.out.println(statement);
-        if (statement.matches("^*(if|for|while)*")){
+
+        if (!parantez.empty()){
             printTab();
-            System.out.println("nested statement{");
+            System.out.println("nested: statement{");
             printTab();
             System.out.println("}");
-
-
         }
+        parantez.push("p");
 
 
     }
 
     @Override
     public void exitIterationStatement(CParser.IterationStatementContext ctx) {
-
+        parantez.pop();
     }
 
     @Override
@@ -809,6 +831,11 @@ public class ProgramPase1 implements CListener {
 
     @Override
     public void exitDeclarationList(CParser.DeclarationListContext ctx) {
+
+    }
+
+    @Override
+    public void print_hash() {
 
     }
 

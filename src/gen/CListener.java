@@ -716,4 +716,6 @@ public interface CListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDeclarationList(CParser.DeclarationListContext ctx);
+
+    void print_hash();
 }

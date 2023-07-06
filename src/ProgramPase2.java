@@ -1,10 +1,42 @@
+import com.sun.jdi.Value;
 import gen.CListener;
 import gen.CParser;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import java.util.*;
+
 public class ProgramPase2 implements CListener{
+
+    List<Hashtable<String, String>> hashtableList = new ArrayList<>();
+        ;
+    Stack stackScope = new Stack();
+    int number_of_scope = 0;
+
+    public void print_hash() {
+        for (int i = 0; i < hashtableList.size(); i++) {
+
+            String nameScope = hashtableList.get(i).get("name_scope");
+            hashtableList.get(i).remove("name_scope");
+            System.out.println("------------- " + nameScope + " -------------\n" +
+                    printItems(hashtableList.get(i)) +
+                    "-----------------------------------------\n");
+            }
+    }
+
+    public String printItems(Hashtable hashtable){
+        String items = "";
+        Enumeration<String> keys = hashtable.keys();
+        while (keys.hasMoreElements()){
+            String key = keys.nextElement();
+            items += "Key = " + key + " | Value = " + hashtable.get(key) + "\n";
+        }
+        return items;
+
+    }
+
+
     @Override
     public void enterPrimaryExpression(CParser.PrimaryExpressionContext ctx) {
 
@@ -217,6 +249,42 @@ public class ProgramPase2 implements CListener{
 
     @Override
     public void enterDeclaration(CParser.DeclarationContext ctx) {
+        Object scope_data = stackScope.pop();
+        stackScope.push(scope_data);
+        String[] scope_data_str = scope_data.toString().split(",");
+
+        String type = ctx.declarationSpecifiers().getText();
+        if (ctx.initDeclaratorList() != null){
+            List<CParser.InitDeclaratorContext> fields = ctx.initDeclaratorList().initDeclarator();
+            for (int i = 0; i < fields.size(); i++){
+
+                CParser.DirectDeclaratorContext name = ctx.initDeclaratorList().initDeclarator(i).declarator().directDeclarator();
+                String name_var = name.Identifier().getText();
+                String array = "";
+                List<TerminalNode> c = name.Constant();
+                if (c.size() != 0){
+                    String length = "";
+                    for (int j = 0; j < c.size(); j++){
+                        length += c.get(j);
+                    }
+                    array = " array, length = " + length;
+                }
+
+                String value = "methodFiled( name: " + name_var + ") (type: " +  type + array + ")" ;
+                String key = "Fileld_" + name_var;
+                hashtableList.get(Integer.parseInt(scope_data_str[0])).put(key, value);
+            }
+        }
+        else {
+            List<CParser.DeclarationSpecifierContext> x = ctx.declarationSpecifiers().declarationSpecifier();
+            String name_var = x.get(x.size()-1).getText();
+            type = x.get(x.size()-2).getText();
+            String value = "methodFiled( name: " + name_var + ") (type: " +  type  + ")" ;
+            String key = "Fileld_" + name_var;
+            hashtableList.get(Integer.parseInt(scope_data_str[0])).put(key, value);
+
+
+        }
 
     }
 
@@ -458,6 +526,47 @@ public class ProgramPase2 implements CListener{
     @Override
     public void enterParameterTypeList(CParser.ParameterTypeListContext ctx) {
 
+        String value = " (parameter list: ";
+
+        String[] param = ctx.parameterList().getText().split(",");
+        String[] stack_data_1 = stackScope.peek().toString().split(",");
+        String[] stack_data_2 = stackScope.peek().toString().split(",");
+
+
+        for(int i = 0; i < param.length; i++){
+
+            String type  = ctx.parameterList().parameterDeclaration(i).declarationSpecifiers().getText();
+            String name = ctx.parameterList().parameterDeclaration(i).declarator().directDeclarator().Identifier().getText();
+            String array  = "";
+            List<TerminalNode> c = ctx.parameterList().parameterDeclaration(i).declarator().directDeclarator().Constant();
+            if (c.size() != 0){
+                array = " array";
+            }
+
+            value += "[type: " + type + array +", "  + "index: " + i + "]";
+            if(i != param.length - 1){
+                value += ",";
+            }
+            else {
+                value +=")";
+            }
+        }
+        String new_value = hashtableList.get(Integer.parseInt(stack_data_2[0])).get(stack_data_2[1]) + value;
+        hashtableList.get(Integer.parseInt(stack_data_2[0])).put(stack_data_2[1], new_value);
+
+        value = "";
+        for(int i = 0; i < param.length; i++){
+
+            String type  = ctx.parameterList().parameterDeclaration(i).declarationSpecifiers().getText();
+            String name = ctx.parameterList().parameterDeclaration(i).declarator().directDeclarator().Identifier().getText();
+            String array  = "";//todo
+            String length = "";//todo
+            String key = "Field_" + name;
+            value = " methodParamField(name: " + name + ") (type: " + type + array + length + ")";
+            hashtableList.get(Integer.parseInt(stack_data_1[0])).put(key, value);
+        }
+
+
     }
 
     @Override
@@ -627,16 +736,38 @@ public class ProgramPase2 implements CListener{
 
     @Override
     public void enterSelectionStatement(CParser.SelectionStatementContext ctx) {
+        String[] data_scope = stackScope.peek().toString().split(",");
+        //todo for single loop scope?
+        if ( data_scope[1].equals("loop")){
+            number_of_scope++;
+            Hashtable<String, String> hashtable = new Hashtable<>();
+            String value = "nested: " + ctx.getStart().getLine();
+            String key = "name_scope";
+            hashtable.put(key, value);
+            hashtableList.add(hashtable);
+        }
+        stackScope.push(number_of_scope + ",loop");
 
     }
 
     @Override
     public void exitSelectionStatement(CParser.SelectionStatementContext ctx) {
-
+        stackScope.pop();
     }
 
     @Override
     public void enterIterationStatement(CParser.IterationStatementContext ctx) {
+        String[] data_scope = stackScope.peek().toString().split(",");
+        //todo for single loop scope?
+        if ( data_scope[1].equals("loop")){
+            number_of_scope++;
+            Hashtable<String, String> hashtable = new Hashtable<>();
+            String value = "nested: " + ctx.getStart().getLine();
+            String key = "name_scope";
+            hashtable.put(key, value);
+            hashtableList.add(hashtable);
+        }
+        stackScope.push(number_of_scope + ",loop");
 
     }
 
@@ -687,26 +818,65 @@ public class ProgramPase2 implements CListener{
 
     @Override
     public void enterExternalDeclaration(CParser.ExternalDeclarationContext ctx) {
-
+            String str_scope = number_of_scope + "," + "null";
+            stackScope.push(str_scope);
+            Hashtable<String, String> hashtable = new Hashtable<>();
+            hashtableList.add(hashtable);
+            hashtableList.get(0).put("name_scope", "Program: "+ ctx.getStart().getLine());
+            //number_of_scope++;
     }
 
     @Override
     public void exitExternalDeclaration(CParser.ExternalDeclarationContext ctx) {
-
+        stackScope.pop();
+        print_hash();
     }
 
     @Override
     public void enterFunctionDefinition(CParser.FunctionDefinitionContext ctx) {
+        String type = ctx.typeSpecifier().getText();
+        String describeFunc = ctx.declarator().getText();
+        int indexOFRightParen = describeFunc.indexOf('(');
+        String nameFunc = null;
+        if(!describeFunc.startsWith("const") && !describeFunc.startsWith("*")){
+            nameFunc = describeFunc.substring(0, indexOFRightParen);
+        }
+        else if(describeFunc.startsWith("const")){
+            nameFunc = describeFunc.substring(4, indexOFRightParen);
+        }
+        else if(describeFunc.startsWith("*const")){
+            nameFunc = describeFunc.substring(5, indexOFRightParen);
+        }
+        else {
+            nameFunc = describeFunc.substring(1, indexOFRightParen);
+        }
+        //value for method
+        String Value = "Method (name: " + nameFunc +") ( return type: " + type + ")";
+        String Key = "Method_" + nameFunc;
+        hashtableList.get(0).put(Key, Value);
+        String str_scope = "0" + ","  + Key;
+        stackScope.push(str_scope);
+        //add in program scope
+        number_of_scope++;
+        Hashtable<String, String> hashtable = new Hashtable<>();
+        hashtableList.add(hashtable);
+        hashtableList.get(number_of_scope).put("name_scope", nameFunc+": "+ ctx.getStart().getLine());
+        str_scope = number_of_scope + ", null";
+        stackScope.push(str_scope);
 
     }
 
     @Override
     public void exitFunctionDefinition(CParser.FunctionDefinitionContext ctx) {
-
+        stackScope.pop();
     }
 
     @Override
     public void enterDeclarationList(CParser.DeclarationListContext ctx) {
+
+
+
+
 
     }
 

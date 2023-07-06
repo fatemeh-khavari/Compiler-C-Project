@@ -864,6 +864,11 @@ public class CBaseListener implements CListener {
 	 */
 	@Override public void exitDeclarationList(CParser.DeclarationListContext ctx) { }
 
+	@Override
+	public void print_hash() {
+
+	}
+
 	/**
 	 * {@inheritDoc}
 	 *
