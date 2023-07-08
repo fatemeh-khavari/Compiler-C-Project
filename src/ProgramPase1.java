@@ -20,6 +20,7 @@ public class ProgramPase1 implements CListener {
         }
     }
     Stack parantez = new Stack();
+    List<String> function_name = new ArrayList<>();
 
     @Override
     public void enterExternalDeclaration(CParser.ExternalDeclarationContext ctx) {
@@ -61,7 +62,7 @@ public class ProgramPase1 implements CListener {
             type = "return type: " + type + " ";
         }
 
-
+        function_name.add(nameFunc);
         printTab();
         if (describeFunc.matches("^main\\(?\\)?.*")){
             System.out.println("main metod: " + type  +"{");
@@ -131,7 +132,7 @@ public class ProgramPase1 implements CListener {
             String name_var = x.get(x.size()-1).getText();
             type = x.get(x.size()-2).getText();
             printTab();
-            System.out.print("field: " + name_var + "/ type: " + type);
+            System.out.println("field: " + name_var + "/ type: " + type );
 
         }
     }
@@ -152,7 +153,27 @@ public class ProgramPase1 implements CListener {
 
     @Override
     public void enterPostfixExpression(CParser.PostfixExpressionContext ctx) {
+        String name = ctx.primaryExpression().getText();
+        if (function_name.contains(name)){
+            String parameter = "void";
+            if (ctx.argumentExpressionList(0) != null){
+                List<CParser.AssignmentExpressionContext> parameterList = ctx.argumentExpressionList(0).assignmentExpression();
+                parameter = "params:";
+                System.out.println(parameterList.size());
+                for (int i = 0; i < parameterList.size(); i++){
+                     String param = parameterList.get(i).getText();
+                    if (param.contains("[")){
+                        int index = param.indexOf("[");
+                        param = param.substring(0, index);
+                    }
 
+                    parameter += " " + param + " (index: " + i + ")";
+                }
+            }
+
+            printTab();
+            System.out.print("function call: name: " + name + "/params: " + parameter + "\n");
+        }
     }
 
     @Override

@@ -844,19 +844,26 @@ import java.util.*;
 
                        if (!type_out.equals(type)){
                            System.out.println("Error210 : in line [" +line+":"+column+"], ReturnType of this method must be ["+type+"]");
+
                        }
 
                    }
-                   else if (out.matches("[1-9][0-9]*") && !type.equals("int")){
+                   else if (out.matches("[1-9][0-9]*") && !(type.equals("int") || type.equals("long") ||
+                           type.equals("short") || type.equals("signed") || type.equals("unsigned"))){//if float and double can be an integer : add them to if
+
                        System.out.println("Error210 : in line [" +line+":"+column+"], ReturnType of this method must be ["+type+"]");
                    }
-                   else if (out.matches("[1-9][0-9]*.[0-9]+") && !type.equals("float")){
+                   else if (out.matches("[1-9][0-9]*[.][0-9]+") && !(type.equals("double") || type.equals("float"))){
+                       System.out.println("Error210 : in line [" +line+":"+column+"], ReturnType of this method must be ["+type+"]");
+
+                   }
+                   else if (out.matches("'[a-zA-Z]+[1-9a-zA-Z]*'")&&!type.equals("char")){
                        System.out.println("Error210 : in line [" +line+":"+column+"], ReturnType of this method must be ["+type+"]");
                    }
-                   else if (out.matches("'[a-zA-Z]+'")&&!type.equals("char")){
+                   else if (out.matches("[a-zA-Z]+[1-9a-zA-Z]*") && !hashtableList.get(Integer.parseInt(scope_data[0])).containsKey("Fileld_"+ out)){
                        System.out.println("Error210 : in line [" +line+":"+column+"], ReturnType of this method must be ["+type+"]");
                    }
-                   else if (out.matches("[a-zA-Z]+") && !hashtableList.get(Integer.parseInt(scope_data[0])).containsKey("Fileld_"+ out)){
+                   else if(out.matches("^\".*\"$") && !type.equals("char array")){
                        System.out.println("Error210 : in line [" +line+":"+column+"], ReturnType of this method must be ["+type+"]");
                    }
 

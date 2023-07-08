@@ -19,7 +19,7 @@ public class Compiler {
         parser.setBuildParseTree(true);
         ParseTree parseTree = parser.externalDeclaration();
         ParseTreeWalker walker = new ParseTreeWalker();
-        CListener listener = new ProgramPhase3();
+        CListener listener = new ProgramPase1();
 
 
         walker.walk(listener, parseTree);

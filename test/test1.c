@@ -15,11 +15,11 @@ a[2] = 6;
 
 }
 
-char main() {
+short  main() {
 int myNumbers[5] = {10, 20, 30, 40, 50};
 float x = 4;
-myFunction(myNumbers);
-return z;
+myFunction(mynumber, sum[4]);
+return 802.44;
 }
 int main(){
 
